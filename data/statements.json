@@ -1,0 +1,27 @@
+{
+ "chunk": 500,
+ "chunks": 351,
+ "modules": 175174,
+ "declarations": 1061375,
+ "kinds": {
+  "theorem": 784055,
+  "def": 212806,
+  "lemma": 34663,
+  "abbrev": 13202,
+  "structure": 8286,
+  "instance": 8199,
+  "inductive": 121,
+  "class": 43
+ },
+ "modulesWithoutDeclarations": 172,
+ "maxGiven": 3000,
+ "maxClaim": 3000,
+ "maxValue": 2000,
+ "cutGiven": 52,
+ "cutClaim": 427,
+ "cutValues": 1216,
+ "theoremsWithoutClaim": 0,
+ "bytes": 359858201,
+ "packedBytes": 92835704,
+ "largestFile": 601784
+}
