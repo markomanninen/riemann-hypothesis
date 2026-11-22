@@ -227,6 +227,7 @@ python3 -I verification/skeleton/check_sample.py /tmp/before-merge/verification/
 | `sample-check.json` | the figures of that comparison |
 | `test_tree.py` | tests the dominator routine against networkx |
 | `data/tree.npz` | the whole dominator tree as arrays, which git ignores |
+| `published.py`, `published.json`, `OUTLINE-PUBLISHED.txt` | the statements that the code names as published and their marks on the skeleton, which [`PUBLISHED.md`](PUBLISHED.md) describes |
 
 One entry of `nodes` in `skeleton.json` holds these fields. An index counts the entries of
 `nodes` from 0.

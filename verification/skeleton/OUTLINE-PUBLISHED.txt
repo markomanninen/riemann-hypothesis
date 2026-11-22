@@ -1,0 +1,38 @@
+  760,227  everyCharacter   [Automorphic Arithmetic › Character Boxes › Main Conclusion]
+  577,248    everyCharacter_of_row   [Automorphic Arithmetic › Character Boxes › Main Conclusion]
+  506,214      every_character_of_literature_of_vWin   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]   {takes 1}
+  315,443        every_character_of_theta_integrals_local_matching   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]
+  266,135          nonempty_hyps_definite_side_of_closed_bound   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]
+   89,671            hypotheses_nonempty_of_unramified_exponents_alt   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]
+   34,967              allRows_of_open0_alt   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]   {takes 6}
+   14,543                at_choice_alt   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]
+   13,933                  offDiag   [Abelian Variety Theory › Proofs › Flag Measures]
+   10,808                servH_row_of_artin   [Abelian Variety Theory › Proofs › Satake Parameters]   {takes 1}
+   20,058              member_bundles_large_unramified_exponents_alt   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]
+   13,160                exists_baseLattice_of_prime_alt   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]
+   15,685              final_alt_alt   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]
+   14,931                final_of_alt   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]   {takes 1}
+   14,338                  linkN_of_twGood_galoisPreconditions   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]
+   20,036            ontoX_and_lamLow_of_unitaryGroupHypotheses'   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]
+   19,703              ontoX_of_hypotheses_alt_alt   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]   {takes 10}
+   12,471            open_orbit_of_unramified_exponents_alt   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]
+   10,783              miStarRow_alt_alt   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]   {takes 12}
+   10,559                miStarRowClosing_alt_alt   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]   {takes 12}
+   10,306                  miStar_row_alt_alt   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]   {takes 12}
+   10,050                    miStar2_of_allTrue_alt_alt   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]   {takes 12}
+   12,029          zero_free_all_of_green_v_win   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]
+   52,094        topCovolSlim2_use_alt_alt   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]   {takes 10}
+   30,169          deep_slim_use   [Weil Bound › Core Statements › Automorphic Kernels]   {takes 4}
+   29,778            deepStR_of_use   [Weil Bound › Core Statements › Automorphic Kernels]   {takes 2}
+   20,438              goodTower_volume_of_reduced   [Automorphic Spectrum › Proofs › Geometry Proofs]   {takes 1}
+   17,143                good_tower_volume_theorem   [Automorphic Spectrum › Proofs › Divisibility Proofs]
+   12,517          topCovolG_alt_alt   [Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts]   {takes 1}
+   55,754      automorphic_window_of_inputs   [Automorphic Arithmetic › Automorphic Varieties › Modularity Argument]   {takes 1}
+   55,113        v_window_of_automorphy_csd_ss_mono_odd   [Automorphic Arithmetic › Automorphic Varieties › Modularity Argument]   {takes 1}
+   47,836          vwin_of_hypotheses_H_E_alt   [Automorphic Arithmetic › Automorphic Varieties › Modularity Argument]
+   51,784    galoisLocalGlobalStrong_recParameter   [Automorphic Arithmetic › Foundations › Galois Representations]
+   48,992      galoisRepresentations_of_thetaLift   [Automorphic Arithmetic › Foundations › Galois Representations]
+   43,403        geoOne_holds   [Automorphic Arithmetic › Foundations › Galois Representations]
+   41,443          geometric_realization_of_weight_one   [Automorphic Arithmetic › Foundations › Galois Representations]
+   26,301            steps_holds   [Automorphic Arithmetic › Foundations › Galois Representations]
+   11,850            kodaira_spencer_of_weight_one   [Automorphic Arithmetic › Foundations › Galois Representations]
